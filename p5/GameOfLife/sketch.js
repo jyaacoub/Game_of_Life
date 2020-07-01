@@ -31,9 +31,14 @@ function randomizeGrid(grid){
 	return grid;
 }
 
-function displayGrid(grid){
+function displayGrid(grid, gridlines){
 	// This function is to display the grid.
-	noStroke();
+	if (gridlines){
+		stroke(0);
+		strokeWeight(gridlines);
+	} else{
+		noStroke();
+	}
 
 	// fills in the tiles according to the grid numbers
 	for (let c = 0; c < grid[0].length; c++) {
@@ -59,8 +64,11 @@ function setup() {
 	createCanvas(COLS*TILE_SIZE, ROWS*TILE_SIZE);
 	grid = createGrid(COLS, ROWS);
 	grid = randomizeGrid(grid);
-	grid.forEach(x => console.log(x));
 	displayGrid(grid);
+}
+
+function updateGrid(oldGrid){
+	// This function creates a new grid based on the old one
 }
 
 function draw() {
