@@ -33,42 +33,24 @@ function randomizeGrid(grid){
 
 function displayGrid(grid){
 	// This function is to display the grid.
-	stroke(0);
+	noStroke();
 
 	// fills in the tiles according to the grid numbers
 	for (let c = 0; c < grid[0].length; c++) {
 		for (let r = 0; r < grid.length; r++) {
 			let x1 = c*TILE_SIZE;
 			let y1 = r*TILE_SIZE;
-
 			let x2 = x1 + TILE_SIZE;
 			let y2 = y1 + TILE_SIZE;
-
-			// let s = c+","+r;
 
 			// 1 means the tile is active/alive
 			if (grid[r][c]){
 				fill(153);
 				rect(x1,y1,x2,y2);
-				
-				// fill(255,0,0);
-				// text(s, x1, y1, x2, y2);
-				// textAlign();
-
-				strokeWeight(2);
-				point(x1 + TILE_SIZE/2, y1 + TILE_SIZE/2);
 			}else {
 				fill(225);
 				rect(x1,y1,x2,y2);
-				
-				// fill(255,0,0);
-				// text(s, x1, y1, x2, y2);
-				// textAlign();
-				
-				strokeWeight(2);
-				point(x1 + TILE_SIZE/2, y1 + TILE_SIZE/2);
 			}
-			strokeWeight(1);
 		}
 	}
 }
