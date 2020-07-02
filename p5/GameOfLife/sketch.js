@@ -1,6 +1,6 @@
-const TILE_SIZE = 50; 	// pixel size of each tile. 
+const TILE_SIZE = 5; 		// pixel size of each tile. 
 const ALIVE_PROB = 0.1; 	// The random-"alive" threshold.
-const START_COND = ['random', 'glider']; //random and/or glider
+const START_COND = []; 		//random (r), glider (g)
 
 const screenW = 1500;
 const screenH =  840;
@@ -11,8 +11,8 @@ const ROWS = Math.round(screenH / TILE_SIZE);
 const FR = 15;  // FrameRate
 
 let grid;
-let tileAge; // will store the history of a particular tile;
-let ageCap = 25;
+let tileAge; // will store the age of a particular tile;
+let ageCap = 10;
 
 // Colors that will represent how old a tile is.
 let FROM_COLOR;
@@ -100,9 +100,9 @@ function setup() {
 	grid = createGrid(COLS, ROWS);
 	tileAge = createGrid(COLS, ROWS);
 
-	if (START_COND.includes('random')){
+	if (START_COND.includes('r')){
 		grid = randomizeGrid(grid);
-	} else if (START_COND.includes('glider')){
+	} else if (START_COND.includes('g')){
 		grid = insertGlider(grid);
 	}
 	displayGrid(grid);
@@ -116,7 +116,7 @@ function updateGrid(grid){
 
 	for (let c = 0; c < numCols; c++) {
 		for (let r = 0; r < numRows; r++) {
-			// Gathers the age of the tile:
+			// Info on the age of the tile:
 			if (grid[r][c] ){
 				tileAge[r][c] += 1;
 			} else{
@@ -139,7 +139,7 @@ function updateGrid(grid){
 				totalAliveNeighbors += grid[r-1][c+1];
 			}
 
-			// Determines if the tile will die or live or birth
+			// Determines if the tile will die or live or birth a new tile
 			if (totalAliveNeighbors < 2 || totalAliveNeighbors > 3){
 				newGrid[r][c] = 0;
 			} else if (totalAliveNeighbors === 3){
@@ -159,6 +159,8 @@ function draw() {
 }
 
 function mouseDragged(){
+	// "Activates" tiles that the mouse is above
+
 	// 0,0 is the top left of the canvas
 	let col = Math.trunc(mouseX/TILE_SIZE);
 	let row = Math.trunc(mouseY/TILE_SIZE);
@@ -168,8 +170,8 @@ function mouseDragged(){
 	}
 }
 
-function mouseClicked(){
-	// 0,0 is the top left of the canvas
+function mouseClicked(){ 
+	// Logs info on that particular block
 	let col = Math.trunc(mouseX/TILE_SIZE);
 	let row = Math.trunc(mouseY/TILE_SIZE);
 
@@ -178,17 +180,15 @@ function mouseClicked(){
 		console.log(tileAge[row][col]);
 		console.log("ageCap:", ageCap);
 	}
-
 }
 
 function doubleClicked(){
-	// 0,0 is the top left of the canvas
+	// Adds a glider to the grid
+
 	let col = Math.trunc(mouseX/TILE_SIZE);
 	let row = Math.trunc(mouseY/TILE_SIZE);
-	// console.log(col, row);
 
 	if (grid[row] && grid[row][col] != undefined){
 		insertGlider(grid, col, row);
 	}
-
 }
