@@ -1,6 +1,6 @@
 const TILE_SIZE = 5; 		// pixel size of each tile. 
 const ALIVE_PROB = 0.1; 	// The random-"alive" threshold.
-const START_COND = []; 		//random (r), glider (g)
+const START_COND = ['r']; 		//random (r), glider (g)
 
 const screenW = 1500;
 const screenH =  840;
