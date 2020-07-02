@@ -19,4 +19,4 @@ All you need to do is locally host the index file located in `Game_of_Life/p5/Ga
 If you want to check the code that powers it just check out the `sketch.js` file in that same folder.
 
 ## Final Product:
-![Game of Life](https://raw.githubusercontent.com/jyaacoub/Game_of_Life/master/Game_of_Life_gif.gif?token=AL7YMSEDC6HYRRHNIVTM5LS67ZN3Y)
+![Game of Life](https://github.com/jyaacoub/Game_of_Life/blob/master/Game_of_Life_gif.gif)
