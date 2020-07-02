@@ -15,7 +15,7 @@ In this game each square can have up to eight neighbours that are all within its
  
  
 ## How to run it:
-All you need to do is locally host the `index.html` file located in the `/GameOfLife/` folder.
+All you need to do is locally host the `index.html` file located in the `/GameOfLife/` folder (or just open it in a web browser).
 If you want to check the code that powers it just check out the `sketch.js` file in that same folder.
 
 ## Final Product:
