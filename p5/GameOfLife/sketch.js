@@ -12,7 +12,6 @@ const FR = 15;  // FrameRate
 
 let grid;
 
-
 function createGrid(cols, rows){
 	// This function creates the 2D array that will represent the grid
 	let array2D = new Array(rows);
@@ -60,7 +59,7 @@ function insertGlider(grid, col, row){
 
 function displayGrid(grid, gridlines){
 	// This function is to display the grid.
-	background(225);
+	background(200);
 	if (gridlines){
 		stroke(0);
 		strokeWeight(gridlines);
@@ -142,4 +141,15 @@ function draw() {
 	clear();
 
 	displayGrid(grid);
+}
+
+function mouseDragged(event){
+	// 0,0 is the top left of the canvas
+	let col = Math.trunc(mouseX/TILE_SIZE);
+	let row = Math.trunc(mouseY/TILE_SIZE);
+	console.log(col, row);
+
+	if (grid[row] && grid[row][col] != undefined){
+		grid[row][col] = 1;
+	}
 }
