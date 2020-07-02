@@ -1,6 +1,6 @@
-const TILE_SIZE = 10; 	// pixel size of each tile. 
-const ALIVE_PROB = 0.3; 	// The random-"alive" threshold.
-const START_COND = ['random', 'glider'];
+const TILE_SIZE = 50; 	// pixel size of each tile. 
+const ALIVE_PROB = 0.1; 	// The random-"alive" threshold.
+const START_COND = ['random', 'glider']; //random and/or glider
 
 const screenW = 1500;
 const screenH =  840;
@@ -11,6 +11,12 @@ const ROWS = Math.round(screenH / TILE_SIZE);
 const FR = 15;  // FrameRate
 
 let grid;
+let tileAge; // will store the history of a particular tile;
+let ageCap = 25;
+
+// Colors that will represent how old a tile is.
+let FROM_COLOR;
+let TO_COLOR;
 
 function createGrid(cols, rows){
 	// This function creates the 2D array that will represent the grid
@@ -59,7 +65,7 @@ function insertGlider(grid, col, row){
 
 function displayGrid(grid, gridlines){
 	// This function is to display the grid.
-	background(200);
+	background(230);
 	if (gridlines){
 		stroke(0);
 		strokeWeight(gridlines);
@@ -75,8 +81,10 @@ function displayGrid(grid, gridlines){
 
 			// 1 means the tile is active/alive
 			if (grid[r][c]){
-				fill(153);
+				let inter = lerpColor(FROM_COLOR, TO_COLOR, tileAge[r][c]/ageCap );
+				fill(inter);
 				rect(x1,y1,TILE_SIZE,TILE_SIZE);
+								
 			}
 		}
 	}
@@ -85,17 +93,18 @@ function displayGrid(grid, gridlines){
 function setup() {
 	createCanvas(screenW, screenH);
 	frameRate(FR);
+	FROM_COLOR = color(0, 255, 0);
+	TO_COLOR = color(255, 0, 0);
 
 	// Creating and displaying the grid
 	grid = createGrid(COLS, ROWS);
+	tileAge = createGrid(COLS, ROWS);
 
 	if (START_COND.includes('random')){
 		grid = randomizeGrid(grid);
 	} else if (START_COND.includes('glider')){
 		grid = insertGlider(grid);
 	}
-	
-
 	displayGrid(grid);
 }
 
@@ -107,6 +116,13 @@ function updateGrid(grid){
 
 	for (let c = 0; c < numCols; c++) {
 		for (let r = 0; r < numRows; r++) {
+			// Gathers the age of the tile:
+			if (grid[r][c] ){
+				tileAge[r][c] += 1;
+			} else{
+				tileAge[r][c] = 0;
+			}
+
 			// Each tile has 8 neighbors:
 			let totalAliveNeighbors = 0;
 
@@ -139,17 +155,40 @@ function updateGrid(grid){
 function draw() {
 	grid = updateGrid(grid);
 	clear();
-
 	displayGrid(grid);
 }
 
-function mouseDragged(event){
+function mouseDragged(){
 	// 0,0 is the top left of the canvas
 	let col = Math.trunc(mouseX/TILE_SIZE);
 	let row = Math.trunc(mouseY/TILE_SIZE);
-	console.log(col, row);
 
 	if (grid[row] && grid[row][col] != undefined){
 		grid[row][col] = 1;
 	}
+}
+
+function mouseClicked(){
+	// 0,0 is the top left of the canvas
+	let col = Math.trunc(mouseX/TILE_SIZE);
+	let row = Math.trunc(mouseY/TILE_SIZE);
+
+	if (grid[row] && grid[row][col] != undefined){
+		console.log(grid[row][col]);
+		console.log(tileAge[row][col]);
+		console.log("ageCap:", ageCap);
+	}
+
+}
+
+function doubleClicked(){
+	// 0,0 is the top left of the canvas
+	let col = Math.trunc(mouseX/TILE_SIZE);
+	let row = Math.trunc(mouseY/TILE_SIZE);
+	// console.log(col, row);
+
+	if (grid[row] && grid[row][col] != undefined){
+		insertGlider(grid, col, row);
+	}
+
 }
