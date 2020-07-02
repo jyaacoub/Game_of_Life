@@ -1,10 +1,14 @@
-const TILE_SIZE = 1; 	// pixel size of each tile. 
+const TILE_SIZE = 10; 	// pixel size of each tile. 
 const ALIVE_PROB = 0.3; 	// The random-"alive" threshold.
+const START_COND = ['random', 'glider'];
 
-const COLS = 150*10;
-const ROWS = 84*10;
+const screenW = 1500;
+const screenH =  840;
 
-const FR = 9;  // FrameRate
+const COLS = Math.round(screenW / TILE_SIZE);
+const ROWS = Math.round(screenH / TILE_SIZE);
+
+const FR = 15;  // FrameRate
 
 let grid;
 
@@ -34,6 +38,26 @@ function randomizeGrid(grid){
 	return grid;
 }
 
+function insertGlider(grid, col, row){
+	let x = col || Math.round(COLS/2);
+	let y = row || Math.round(ROWS/2);
+
+	// This function inserts a glider to the grid
+	grid[y-1][x-1] = 0;
+	grid[y-1][x] = 0;
+	grid[y-1][x+1] = 1;
+
+	grid[y][x-1] = 1;
+	grid[y][x] = 0;
+	grid[y][x+1] = 1;
+
+	grid[y+1][x-1] = 0;
+	grid[y+1][x] = 1;
+	grid[y+1][x+1] = 1;
+
+	return grid;
+}
+
 function displayGrid(grid, gridlines){
 	// This function is to display the grid.
 	background(225);
@@ -60,11 +84,19 @@ function displayGrid(grid, gridlines){
 }
 
 function setup() {
-	createCanvas(COLS*TILE_SIZE, ROWS*TILE_SIZE);
+	createCanvas(screenW, screenH);
 	frameRate(FR);
 
+	// Creating and displaying the grid
 	grid = createGrid(COLS, ROWS);
-	grid = randomizeGrid(grid);
+
+	if (START_COND.includes('random')){
+		grid = randomizeGrid(grid);
+	} else if (START_COND.includes('glider')){
+		grid = insertGlider(grid);
+	}
+	
+
 	displayGrid(grid);
 }
 
@@ -92,10 +124,13 @@ function updateGrid(grid){
 				totalAliveNeighbors += grid[r-1][c+1];
 			}
 
+			// Determines if the tile will die or live or birth
 			if (totalAliveNeighbors < 2 || totalAliveNeighbors > 3){
 				newGrid[r][c] = 0;
 			} else if (totalAliveNeighbors === 3){
 				newGrid[r][c] = 1;
+			} else {
+				newGrid[r][c] = grid[r][c];
 			}
 		}
 	}
@@ -105,5 +140,6 @@ function updateGrid(grid){
 function draw() {
 	grid = updateGrid(grid);
 	clear();
+
 	displayGrid(grid);
 }
