@@ -1,10 +1,13 @@
-const TILE_SIZE = 20; 	// pixel size of each tile. 
-const ALIVE_PROB = 0.1; 	// The random-"alive" threshold.
+const TILE_SIZE = 1; 	// pixel size of each tile. 
+const ALIVE_PROB = 0.3; 	// The random-"alive" threshold.
 
-const COLS = 75;
-const ROWS = 42;
+const COLS = 150*10;
+const ROWS = 84*10;
+
+const FR = 9;  // FrameRate
 
 let grid;
+
 
 function createGrid(cols, rows){
 	// This function creates the 2D array that will represent the grid
@@ -17,14 +20,14 @@ function createGrid(cols, rows){
 
 function randomizeGrid(grid){
 	// Fills the grid with random 1s and 0 according to a probabilty
-	for (let c = 0; c < grid.length; c++) {
-		for (let r = 0; r < grid[c].length; r++) {
+	for (let r = 0; r < grid.length; r++) {
+		for (let c = 0; c < grid[r].length; c++) {
 			randNum = Math.random();
 			if (randNum < ALIVE_PROB) { 
 				// If the "alive" threshold is met then the tile is active
-				grid[c][r] = 1;
+				grid[r][c] = 1;
 			} else{
-				grid[c][r] = 0;
+				grid[r][c] = 0;
 			}
 		}
 	}
@@ -33,6 +36,7 @@ function randomizeGrid(grid){
 
 function displayGrid(grid, gridlines){
 	// This function is to display the grid.
+	background(225);
 	if (gridlines){
 		stroke(0);
 		strokeWeight(gridlines);
@@ -45,16 +49,11 @@ function displayGrid(grid, gridlines){
 		for (let r = 0; r < grid.length; r++) {
 			let x1 = c*TILE_SIZE;
 			let y1 = r*TILE_SIZE;
-			let x2 = x1 + TILE_SIZE;
-			let y2 = y1 + TILE_SIZE;
 
 			// 1 means the tile is active/alive
 			if (grid[r][c]){
 				fill(153);
-				rect(x1,y1,x2,y2);
-			}else {
-				fill(225);
-				rect(x1,y1,x2,y2);
+				rect(x1,y1,TILE_SIZE,TILE_SIZE);
 			}
 		}
 	}
@@ -62,16 +61,49 @@ function displayGrid(grid, gridlines){
 
 function setup() {
 	createCanvas(COLS*TILE_SIZE, ROWS*TILE_SIZE);
+	frameRate(FR);
+
 	grid = createGrid(COLS, ROWS);
 	grid = randomizeGrid(grid);
 	displayGrid(grid);
 }
 
-function updateGrid(oldGrid){
+function updateGrid(grid){
 	// This function creates a new grid based on the old one
+	const numCols = grid[0].length;
+	const numRows = grid.length;
+	let newGrid = createGrid(numCols, numRows);
+
+	for (let c = 0; c < numCols; c++) {
+		for (let r = 0; r < numRows; r++) {
+			// Each tile has 8 neighbors:
+			let totalAliveNeighbors = 0;
+
+			if (c > 1 && r > 1 ){
+				totalAliveNeighbors += grid[r-1][c-1] + grid[r-1][c] + grid[r][c-1];
+			}
+			if (c < numCols-1 && r < numRows - 1){
+				totalAliveNeighbors += grid[r+1][c+1] + grid[r+1][c] + grid[r][c+1];
+			}
+				if (c > 1 && r < numRows - 1){
+				totalAliveNeighbors += grid[r+1][c-1];
+			}
+			if (c < numCols-1 && r > 1){
+				totalAliveNeighbors += grid[r-1][c+1];
+			}
+
+			if (totalAliveNeighbors < 2 || totalAliveNeighbors > 3){
+				newGrid[r][c] = 0;
+			} else if (totalAliveNeighbors === 3){
+				newGrid[r][c] = 1;
+			}
+		}
+	}
+	return newGrid;
 }
 
 function draw() {
+	grid = updateGrid(grid);
+	clear();
+	displayGrid(grid);
 }
-
-setup();
